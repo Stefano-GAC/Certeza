@@ -1,0 +1,569 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Certeza — Cerveza Artesanal</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Bebas+Neue&family=Manrope:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <script src="script.js?v=20260505"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=20260505" />
+</head>
+
+<body class="bg-beer-dark text-beer-light font-body">
+
+  <!-- ═══════════════════ PANTALLA DE CARGA ═══════════════════ -->
+  <div id="pantalla-carga">
+    <div class="loader-frame">
+      <div class="lc lc-tl"></div>
+      <div class="lc lc-tr"></div>
+      <div class="lc lc-bl"></div>
+      <div class="lc lc-br"></div>
+      <div class="loader-top-ornament">
+        <span class="loader-orn-line"></span>
+        <span class="loader-orn-diamond">◆</span>
+        <span class="loader-orn-line"></span>
+      </div>
+      <img src="multimedia/logo2.png" alt="Certeza cargando" id="loader-logo" />
+      <p class="loader-brand">CERTEZA</p>
+      <div class="loader-divider">
+        <span></span><span class="loader-divider-star">✦</span><span></span>
+      </div>
+      <p class="loader-tagline">CERVECERÍA ARTESANAL</p>
+      <div class="loader-progress"><div class="loader-progress-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ NAVBAR EDITORIAL ═══════════════════ -->
+  <nav id="navbar">
+
+    <!-- Desktop: grid segmentado 7 columnas -->
+    <div class="nav-desktop-grid">
+
+      <!-- Waffle -->
+      <button class="nav-box" onclick="toggleMobileMenu()" aria-label="Abrir menu" style="background:none;border:none;cursor:pointer;justify-content:center">
+        <span class="nav-box-yellow"></span><span class="nav-box-cyan"></span>
+        <span class="nav-box-content">
+          <div class="nav-waffle">
+            <div class="nav-waffle-row"><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div></div>
+            <div class="nav-waffle-row"><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div></div>
+            <div class="nav-waffle-row"><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div></div>
+          </div>
+        </span>
+      </button>
+
+      <!-- MENU -->
+      <a href="#inicio" class="nav-box nav-box-link">
+        <span class="nav-box-yellow"></span><span class="nav-box-cyan"></span>
+        <span class="nav-box-content nav-box-label">MENU</span>
+      </a>
+
+      <!-- BOOK -->
+      <a href="#cervezas" class="nav-box nav-box-link">
+        <span class="nav-box-yellow"></span><span class="nav-box-cyan"></span>
+        <span class="nav-box-content nav-box-label">BOOK</span>
+      </a>
+
+      <!-- Logo central -->
+      <div class="nav-logo-center">
+        <div class="nav-logo-wrap" id="nav-logo-wrap">
+          <div class="nav-logo nav-logo-large" id="nav-logo-large">
+            <img src="multimedia/logo2.png" alt="Certeza logo" class="nav-logo-image" />
+          </div>
+          <div class="nav-logo nav-logo-compact" id="nav-logo-compact">
+            <span class="nav-logo-name nav-logo-name-compact">CERTEZA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sociales (sin animacion de caja) -->
+      <div class="nav-socials">
+        <a href="tel:+34912345678" class="nav-icon-link" title="Telefono" aria-label="Telefono">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.5 19.79 19.79 0 0 1 1.61 2.84 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </a>
+        <span class="nav-dot-sep">&#9679;</span>
+        <a href="mailto:info@certeza.com" class="nav-icon-link" title="Email" aria-label="Email">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </a>
+        <span class="nav-dot-sep">&#9679;</span>
+        <a href="https://www.facebook.com/certezacerveceria" target="_blank" rel="noopener noreferrer" class="nav-icon-link" title="Facebook" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <span class="nav-dot-sep">&#9679;</span>
+        <a href="https://www.instagram.com/certezacerveceria" target="_blank" rel="noopener noreferrer" class="nav-icon-link" title="Instagram" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+      </div>
+
+      <!-- Idioma -->
+      <button id="lang-toggle" class="nav-box" onclick="toggleLang()" style="background:none;border:none;cursor:pointer;justify-content:center" title="Cambiar idioma" aria-label="Cambiar idioma">
+        <span class="nav-box-yellow"></span><span class="nav-box-cyan"></span>
+        <span class="nav-box-content nav-box-label">
+          <img id="lang-flag" src="https://flagcdn.com/24x18/es.png" srcset="https://flagcdn.com/48x36/es.png 2x" width="24" height="18" alt="Español" style="display:block;border-radius:2px;box-shadow:0 1px 4px rgba(0,0,0,0.45)">
+        </span>
+      </button>
+
+      <!-- Buscar -->
+      <button class="nav-box" style="background:none;border:none;cursor:pointer;justify-content:center">
+        <span class="nav-box-yellow"></span><span class="nav-box-cyan"></span>
+        <span class="nav-box-content">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(255,255,255,0.75)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+      </button>
+
+    </div>
+
+    <!-- Mobile -->
+    <div class="nav-mobile-bar">
+      <button onclick="toggleMobileMenu()" aria-label="Abrir menu" style="background:none;border:none;cursor:pointer;padding:4px">
+        <div class="nav-waffle">
+          <div class="nav-waffle-row"><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div></div>
+          <div class="nav-waffle-row"><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div></div>
+          <div class="nav-waffle-row"><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div><div class="nav-waffle-dot"></div></div>
+        </div>
+      </button>
+      <div class="nav-logo-wrap" style="position:relative;width:52px;height:52px">
+        <div class="nav-logo nav-logo-large" id="nav-logo-large-mobile">
+          <img src="multimedia/logo2.png" alt="Certeza logo" class="nav-logo-image" />
+        </div>
+        <div class="nav-logo nav-logo-compact" id="nav-logo-compact-mobile">
+          <span class="nav-logo-name nav-logo-name-compact">CERTEZA</span>
+        </div>
+      </div>
+      <button style="background:none;border:none;cursor:pointer;padding:4px;color:rgba(255,255,255,0.75)" title="Buscar" aria-label="Buscar">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+
+    <div class="nav-border-line"></div>
+
+    <div id="mobile-menu">
+      <a href="#inicio" onclick="closeMobileMenu()">Inicio</a>
+      <a href="#cervezas" onclick="closeMobileMenu()">Cervezas</a>
+      <a href="#contacto" onclick="closeMobileMenu()">Contacto</a>
+      <a href="#cervezas" onclick="closeMobileMenu()">Book</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════ HERO ═══════════════════ -->
+  <section id="inicio">
+    <!-- Videos superpuestos (crossfade) -->
+    <div style="position:absolute;inset:0;z-index:0;width:100%;height:100%;overflow:hidden">
+      <video id="video0" class="hero-video-layer" autoplay muted playsinline preload="auto" style="opacity:1;z-index:2">
+        <source src="multimedia/1777888677856-05e224b5-a176-4131-b313-6dc168051ac0-1998147_0_ltx23_v__00374-audio.mp4" type="video/mp4" />
+      </video>
+      <video id="video1" class="hero-video-layer" muted playsinline preload="auto" style="opacity:0;z-index:1">
+        <source src="multimedia/hero-video.mp4" type="video/mp4" />
+      </video>
+      <video id="video2" class="hero-video-layer" muted playsinline preload="auto" style="opacity:0;z-index:1">
+        <source src="multimedia/hero-video-2.mp4" type="video/mp4" />
+      </video>
+
+      <div class="hero-overlay-gold"></div>
+      <div class="hero-overlay-lr"></div>
+      <div class="hero-overlay-tb"></div>
+    </div>
+
+    <!-- Contenido -->
+    <div class="hero-content" id="hero-content">
+      <div class="hero-line" id="hero-line"></div>
+      <h1 class="hero-h1" id="hero-h1">CERTEZA</h1>
+      <p class="hero-sub" id="hero-sub">Cerveza Artesanal</p>
+      <p class="hero-desc" id="hero-desc">
+        Espuma dorada, aroma intenso y un caracter que deja huella. Cada sorbo convierte el momento en una experiencia irresistible.
+      </p>
+      <div class="hero-btns" id="hero-btns">
+        <a href="#cervezas" class="btn-primary">Explorar Cervezas</a>
+        <a href="#contacto" class="btn-outline">Contacto</a>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator">
+      <div class="scroll-dot"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ STATS ═══════════════════ -->
+  <section class="stats-section" id="stats">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-row"><span class="stat-num" data-target="8">0</span><span class="stat-suffix">+</span></div>
+        <p class="stat-label">Variedades artesanales</p>
+      </div>
+      <div class="stat-item">
+        <div class="stat-row"><span class="stat-num" data-target="5000">0</span><span class="stat-suffix">+</span></div>
+        <p class="stat-label">Clientes felices</p>
+      </div>
+      <div class="stat-item">
+        <div class="stat-row"><span class="stat-num" data-target="3">0</span><span class="stat-suffix"> años</span></div>
+        <p class="stat-label">Elaborando con pasión</p>
+      </div>
+      <div class="stat-item">
+        <div class="stat-row"><span class="stat-num" data-target="48">0</span><span class="stat-suffix">+</span></div>
+        <p class="stat-label">Eventos realizados</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ CERVEZAS ESTILO ALAFUT ═══════════════════ -->
+  <section id="cervezas" class="alafut-beers-section">
+    <div class="alafut-beers-heading-wrap">
+      <h2 class="alafut-beers-heading">Ilustradas para mirar, creadas para brindar.</h2>
+    </div>
+    <div class="alafut-beers-shell" data-alafut-slider>
+      <div class="alafut-beers-window">
+        <div class="alafut-beers-track alafut-beers-track--loop" id="alafut-slider-track" role="list" aria-label="Carrusel de cervezas estilo Alafut"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ GALERÍA FOTOS ═══════════════════ -->
+  <section id="galeria" style="background:#0e2a1c">
+    <!-- Encabezado -->
+    <div style="text-align:center;padding:5rem 1.5rem 2.5rem">
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,4rem);color:#fff;margin-bottom:0.75rem">
+        Nuestra <span style="color:#c9a53e">Galería</span>
+      </h2>
+      <p style="color:#8aab97;font-size:1.1rem;max-width:36rem;margin:0 auto">Imágenes que cuentan lo que las palabras no pueden.</p>
+      <div style="height:1px;width:6rem;background:#c9a53e;margin:1.5rem auto 0"></div>
+    </div>
+
+    <!-- Grid -->
+    <div class="foto-grid">
+      <div class="foto-cell" style="grid-area:main"  data-titulo="Tres razones para brindar"   data-texto="Cada botella es una historia. Elige la tuya.">
+        <img src="multimedia/CERTEZA Trio _ Hero Poster.png" alt="Hero Poster" loading="lazy">
+        <div class="foto-overlay"><div class="foto-texto"><p class="foto-label">CERTEZA</p><h3>Tres razones para brindar</h3><p>Cada botella es una historia. Elige la tuya.</p><span>Ver más</span></div></div>
+      </div>
+      <div class="foto-cell" style="grid-area:s1"    data-titulo="IPA Neon City"                data-texto="Intensidad que enciende la noche.">
+        <img src="multimedia/CERTEZA IPA _ Neon City.png" alt="IPA Neon City" loading="lazy">
+        <div class="foto-overlay"><div class="foto-texto"><p class="foto-label">CERTEZA</p><h3>IPA Neon City</h3><p>Intensidad que enciende la noche.</p><span>Ver más</span></div></div>
+      </div>
+      <div class="foto-cell" style="grid-area:s2"    data-titulo="Lager Golden Splash"          data-texto="Frescura que no se negocia.">
+        <img src="multimedia/CERTEZA Lager _ Golden Splash.png" alt="Lager" loading="lazy">
+        <div class="foto-overlay"><div class="foto-texto"><p class="foto-label">CERTEZA</p><h3>Lager Golden Splash</h3><p>Frescura que no se negocia.</p><span>Ver más</span></div></div>
+      </div>
+      <div class="foto-cell" style="grid-area:wide"  data-titulo="La cerveza del momento"        data-texto="Los mejores planes merecen la mejor cerveza.">
+        <img src="multimedia/CERTEZA Trio _ Rooftop Lifestyle.png" alt="Rooftop" loading="lazy">
+        <div class="foto-overlay"><div class="foto-texto"><p class="foto-label">CERTEZA</p><h3>La cerveza del momento</h3><p>Los mejores planes merecen la mejor cerveza.</p><span>Ver más</span></div></div>
+      </div>
+      <div class="foto-cell" style="grid-area:s3"    data-titulo="Stout Smoky Bar"               data-texto="Chocolate, humo y carácter en cada sorbo.">
+        <img src="multimedia/CERTEZA Stout _ Smoky Bar.png" alt="Stout" loading="lazy">
+        <div class="foto-overlay"><div class="foto-texto"><p class="foto-label">CERTEZA</p><h3>Stout Smoky Bar</h3><p>Chocolate, humo y carácter en cada sorbo.</p><span>Ver más</span></div></div>
+      </div>
+      <div class="foto-cell" style="grid-area:s4"    data-titulo="Artesanal de verdad"            data-texto="Elaborada con obsesión, servida con orgullo.">
+        <img src="multimedia/Cinematic Craft Beer 3.png" alt="Craft Beer 3" loading="lazy">
+        <div class="foto-overlay"><div class="foto-texto"><p class="foto-label">CERTEZA</p><h3>Artesanal de verdad</h3><p>Elaborada con obsesión, servida con orgullo.</p><span>Ver más</span></div></div>
+      </div>
+      <div class="foto-cell" style="grid-area:s5"    data-titulo="Más que una cerveza"            data-texto="Es la excusa perfecta para reunirse.">
+        <img src="multimedia/Cinematic Craft Beer 4.png" alt="Craft Beer 4" loading="lazy">
+        <div class="foto-overlay"><div class="foto-texto"><p class="foto-label">CERTEZA</p><h3>Más que una cerveza</h3><p>Es la excusa perfecta para reunirse.</p><span>Ver más</span></div></div>
+      </div>
+      <div class="foto-cell" style="grid-area:s6"    data-titulo="Lujo en cada copa"              data-texto="Porque los detalles marcan la diferencia.">
+        <img src="multimedia/CERTEZA Bottle _ Glass _ Luxury Bar.png" alt="Luxury Bar" loading="lazy">
+        <div class="foto-overlay"><div class="foto-texto"><p class="foto-label">CERTEZA</p><h3>Lujo en cada copa</h3><p>Porque los detalles marcan la diferencia.</p><span>Ver más</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ TIMELINE ELABORACIÓN ═══════════════════ -->
+  <section id="proceso" class="timeline-section">
+    <div class="timeline-glow timeline-glow-1"></div>
+    <div class="timeline-glow timeline-glow-2"></div>
+
+    <div class="timeline-header">
+      <p class="timeline-label">NUESTRO PROCESO</p>
+      <h2 class="timeline-title">De Grano a<span>Sorbo Perfecto</span></h2>
+    </div>
+
+    <div class="timeline-grid">
+      <div class="timeline-card timeline-card-1">
+        <div class="timeline-step">1</div>
+        <h3>Selección</h3>
+        <p>Maltas premium 100% naturales</p>
+        <div class="timeline-video-overlay">
+          <video class="timeline-video" src="multimedia/Selección.mp4" muted loop playsinline preload="none"></video>
+          <div class="timeline-video-title">Selección</div>
+        </div>
+      </div>
+      <div class="timeline-card timeline-card-2">
+        <div class="timeline-step">2</div>
+        <h3>Maceración</h3>
+        <p>3 horas de extracción perfecta</p>
+        <div class="timeline-video-overlay">
+          <video class="timeline-video" src="multimedia/Maceración.mp4" muted loop playsinline preload="none"></video>
+          <div class="timeline-video-title">Maceración</div>
+        </div>
+      </div>
+      <div class="timeline-card timeline-card-3">
+        <div class="timeline-step">3</div>
+        <h3>Cocción</h3>
+        <p>90 min con lúpulo artesanal</p>
+        <div class="timeline-video-overlay">
+          <video class="timeline-video" src="multimedia/Cocción.mp4" muted loop playsinline preload="none"></video>
+          <div class="timeline-video-title">Cocción</div>
+        </div>
+      </div>
+      <div class="timeline-card timeline-card-4">
+        <div class="timeline-step">4</div>
+        <h3>Fermentación</h3>
+        <p>2-3 semanas a temperatura controlada</p>
+        <div class="timeline-video-overlay">
+          <video class="timeline-video" src="multimedia/Fermentación.mp4" muted loop playsinline preload="none"></video>
+          <div class="timeline-video-title">Fermentación</div>
+        </div>
+      </div>
+      <div class="timeline-card timeline-card-5">
+        <div class="timeline-step">5</div>
+        <h3>Maduración</h3>
+        <p>Reposado en tanques de acero</p>
+        <div class="timeline-video-overlay">
+          <video class="timeline-video" src="multimedia/Maduración.mp4" muted loop playsinline preload="none"></video>
+          <div class="timeline-video-title">Maduración</div>
+        </div>
+      </div>
+      <div class="timeline-card timeline-card-6">
+        <div class="timeline-step">6</div>
+        <h3>Envasado</h3>
+        <p>Botella fresca lista para disfrutar</p>
+        <div class="timeline-video-overlay">
+          <video class="timeline-video" src="multimedia/Envasado.mp4" muted loop playsinline preload="none"></video>
+          <div class="timeline-video-title">Envasado</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ EVENTOS ═══════════════════ -->
+  <section id="eventos" class="eventos-section">
+    <div class="eventos-glow eventos-glow-1"></div>
+    <div class="eventos-glow eventos-glow-2"></div>
+
+    <div class="eventos-header">
+      <p class="eventos-label">PRÓXIMOS EVENTOS</p>
+      <h2 class="eventos-title">Vive la Experiencia<span>CERTEZA</span></h2>
+    </div>
+
+    <div class="eventos-grid">
+      <div class="eventos-card">
+        <div class="eventos-media">
+          <img src="multimedia/CERTEZA Night _ Live Music.png" alt="CERTEZA Night Live Music" loading="lazy">
+          <div class="eventos-media-overlay"></div>
+          <div class="eventos-frecuencia">Todos los martes</div>
+          <div class="eventos-meta-row">
+            <div class="eventos-lugar">Bogotá</div>
+            <div class="eventos-hora">Desde las 7:00 PM</div>
+          </div>
+        </div>
+        <h3>CERTEZA Night Live Music</h3>
+        <p>Sesiones en vivo con cerveza fría, luces bajas y una mesa lista para quedarse toda la noche.</p>
+        <div class="eventos-footer">
+          <span>Cupo limitado cada edición</span>
+          <button class="eventos-btn">Reservar</button>
+        </div>
+      </div>
+
+      <div class="eventos-card">
+        <div class="eventos-media">
+          <img src="multimedia/CERTEZA Night _ Crowd Wide Shot.png" alt="CERTEZA Night Crowd Wide Shot" loading="lazy">
+          <div class="eventos-media-overlay"></div>
+          <div class="eventos-frecuencia">Cada fin de semana</div>
+          <div class="eventos-meta-row">
+            <div class="eventos-lugar">Envigado</div>
+            <div class="eventos-hora">Viernes y sábados, 8:00 PM</div>
+          </div>
+        </div>
+        <h3>CERTEZA Night Crowd Wide Shot</h3>
+        <p>El plan grande de la casa: barra encendida, mesas llenas y energía de rooftop para cerrar la semana.</p>
+        <div class="eventos-footer">
+          <span>Cupo limitado cada edición</span>
+          <button class="eventos-btn">Reservar</button>
+        </div>
+      </div>
+
+      <div class="eventos-card">
+        <div class="eventos-media">
+          <img src="multimedia/CERTEZA Night _ Cheers Moment.png" alt="CERTEZA Night Cheers Moment" loading="lazy">
+          <div class="eventos-media-overlay"></div>
+          <div class="eventos-frecuencia">Primer jueves de cada mes</div>
+          <div class="eventos-meta-row">
+            <div class="eventos-lugar">Medellín</div>
+            <div class="eventos-hora">8:30 PM</div>
+          </div>
+        </div>
+        <h3>CERTEZA Night Cheers Moment</h3>
+        <p>Una noche pensada para brindar: rondas compartidas, maridaje rápido y ambiente de celebración.</p>
+        <div class="eventos-footer">
+          <span>Cupo limitado cada edición</span>
+          <button class="eventos-btn">Reservar</button>
+        </div>
+      </div>
+
+      <div class="eventos-card">
+        <div class="eventos-media">
+          <img src="multimedia/CERTEZA Night _ Bartender Pour.png" alt="CERTEZA Night Bartender Pour" loading="lazy">
+          <div class="eventos-media-overlay"></div>
+          <div class="eventos-frecuencia">Último sábado de cada mes</div>
+          <div class="eventos-meta-row">
+            <div class="eventos-lugar">Cali</div>
+            <div class="eventos-hora">9:00 PM</div>
+          </div>
+        </div>
+        <h3>CERTEZA Night Bartender Pour</h3>
+        <p>Cata guiada frente a barra con servicio especial, pours perfectos y foco total en la experiencia.</p>
+        <div class="eventos-footer">
+          <span>Cupo limitado cada edición</span>
+          <button class="eventos-btn">Reservar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="eventos-footer-cta">
+      <a href="#contacto">Ver todos los eventos →</a>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ IMPACTO VIDEO ═══════════════════ -->
+  <section id="experiencia" class="impacto-section">
+    <div class="impacto-glow impacto-glow-cyan"></div>
+    <div class="impacto-glow impacto-glow-gold"></div>
+
+    <div class="impacto-wrap">
+      <div class="impacto-copy">
+        <p class="impacto-kicker">NUEVA EXPERIENCIA</p>
+        <h2>El Momento <span>Que Hace Boom</span></h2>
+        <p class="impacto-desc">
+          Color, espuma y energia en una sola toma.
+          Mira el video y deja que Certeza hable por si sola.
+        </p>
+        <a href="#contacto" class="impacto-cta">RESERVAR AHORA</a>
+      </div>
+
+      <div class="impacto-video-shell">
+        <div class="impacto-video-frame"></div>
+        <video id="impacto-video" class="impacto-video" autoplay muted loop playsinline preload="auto">
+          <source src="multimedia/1777889988869-bebe544a-47cc-458d-b1eb-6af7b9a5e332-1998211_0_ltx23_v__00393-audio.mp4" type="video/mp4" />
+        </video>
+        <div class="impacto-video-fade"></div>
+        <span class="impacto-video-tag">EXPERIENCIA CERTEZA</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ VÍSITANOS ═══════════════════ -->
+  <section class="visitanos-section">
+    <div class="visitanos-wrap">
+
+      <div class="visitanos-imagen">
+        <img src="multimedia/CERTEZA Night _ Bartender Pour.png" alt="Ambiente Certeza" />
+        <div class="visitanos-imagen-overlay">
+          <div class="visitanos-badge">
+            <span class="visitanos-badge-num">4.9</span>
+            <span class="visitanos-badge-txt">★ Valoración<br>en Google</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="visitanos-info">
+        <p class="visitanos-label">ESTAMOS ESPERANDO</p>
+        <h2 class="visitanos-title">Ven y<span>Vívelo en Persona</span></h2>
+        <p class="visitanos-desc">Una barra diseñada para quedarse. Luz cálida, música en vivo los fines de semana y la mejor selección de cervezas artesanales del país.</p>
+
+        <div class="visitanos-data">
+          <div class="visitanos-row">
+            <span class="visitanos-icon">📍</span>
+            <div>
+              <strong>Dónde estamos</strong>
+              <span>Calle Embajadores 62, Madrid &mdash; <a href="https://www.google.com/maps/search/?api=1&query=Calle+Embajadores+62+Madrid" target="_blank" rel="noopener" class="visitanos-map-link">Ver en mapa &#8599;</a></span>
+            </div>
+          </div>
+          <div class="visitanos-row">
+            <span class="visitanos-icon">🕐</span>
+            <div>
+              <strong>Horarios</strong>
+              <span>Mar&mdash;Jue 4 pm &ndash; 11 pm &nbsp;&nbsp;|&nbsp;&nbsp; Vie&mdash;Sáb 12 pm &ndash; 2 am &nbsp;&nbsp;|&nbsp;&nbsp; Dom 12 pm &ndash; 9 pm</span>
+            </div>
+          </div>
+          <div class="visitanos-row">
+            <span class="visitanos-icon">📞</span>
+            <div>
+              <strong>Reservas</strong>
+              <span>+57 310 000 0000 &nbsp;&nbsp;|&nbsp;&nbsp; info@certeza.com</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="#contacto" class="visitanos-cta">Reservar Mesa Ahora</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <footer id="contacto">
+    <div class="max-w-7xl mx-auto">
+      <div class="footer-content row g-4 mb-5" id="footer-content">
+
+        <!-- Marca -->
+        <div class="col-12 col-md-4">
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.14em;color:#c9a53e;margin-bottom:0.75rem">CERTEZA</h3>
+          <p style="color:#c8ddd5;max-width:22rem">
+            Cervecería artesanal dedicada a crear experiencias únicas con ingredientes de primera calidad.
+          </p>
+        </div>
+
+        <!-- Navegación -->
+        <div class="col-12 col-md-4">
+          <h4 style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:#c9a53e;margin-bottom:1rem">Navegación</h4>
+          <ul class="list-unstyled" style="line-height:2">
+            <li><a href="#inicio"   style="color:#c8ddd5;text-decoration:none" class="footer-link">Inicio</a></li>
+            <li><a href="#cervezas" style="color:#c8ddd5;text-decoration:none" class="footer-link">Nuestras Cervezas</a></li>
+            <li><a href="#contacto" style="color:#c8ddd5;text-decoration:none" class="footer-link">Contacto</a></li>
+          </ul>
+        </div>
+
+        <!-- Contacto -->
+        <div class="col-12 col-md-4">
+          <h4 style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:#c9a53e;margin-bottom:1rem">Contacto</h4>
+          <div style="color:#c8ddd5;line-height:2">
+            <p class="mb-0">info@certeza.com</p>
+            <p class="mb-0">+34 91 234 5678</p>
+            <p class="mb-0">Madrid, España</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="text-center" style="color:#8aab97;font-size:0.875rem">
+        <p class="mb-0">&copy; 2026 CERTEZA. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════ WHATSAPP FLOTANTE ═══════════════════ -->
+  <a href="https://wa.me/573001234567?text=Hola%20Certeza%2C%20me%20interesa%20conocer%20m%C3%A1s%20sobre%20vuestras%20cervezas" target="_blank" rel="noopener noreferrer" class="whatsapp-flotante" id="whatsapp-flotante" title="Contacta con nosotros por WhatsApp" aria-label="Contactar por WhatsApp">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.121-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.947 1.227l-.356.214-3.71-.973.992 3.63-.235.374a9.861 9.861 0 001.516 5.394c.75 1.092 1.688 2.014 2.792 2.637 1.104.623 2.36.974 3.905 1.077h.855c3.798 0 6.882-3.087 6.882-6.887a6.873 6.873 0 00-1.994-4.855 6.897 6.897 0 00-4.93-2.029z"/>
+    </svg>
+  </a>
+
+  <!-- ═══════════════════ CTA MÓVIL FIJO ═══════════════════ -->
+  <div id="cta-movil-fijo" class="cta-movil-fijo">
+    <a href="#cervezas" class="cta-movil-btn">Pedir Ahora</a>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
