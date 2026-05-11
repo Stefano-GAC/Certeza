@@ -1,4 +1,74 @@
-﻿/* ── Pantalla de carga ─────────────────────── */
+/*
+  ARCHIVO DE ESTILOS PRINCIPAL — Certeza Cervecería Artesanal
+  ================================================================
+  Índice rápido (Ctrl+F para navegar):
+    1. Variables globales y tokens de marca
+    2. Parallax
+    3. Pantalla de carga (loader)
+    4. Galería de fotos
+    5. Sección Impacto video
+    6. Base y tipografía global
+    7. Navbar editorial
+    8. Hero con videos
+    9. Galería legacy / carrusel latas
+   10. Footer
+   11. WhatsApp flotante
+   12. CTA Móvil fijo
+   13. Timeline de elaboración
+   14. Eventos
+   15. Carrusel estilo Alafut
+   16. Stats
+   17. Visítanos
+   18. Manifiesto
+   19. Cierre cinemático
+   20. Footer propio
+   21. Reveal escalonado
+  ================================================================
+*/
+
+/* ── 1. Variables globales y tokens de marca ──
+   Centralizar los colores aquí permite cambiar toda la paleta
+   editando solo este bloque. Nunca usar valores hexadecimales
+   directamente en reglas; usar siempre estas variables.
+   --brand-bg      : fondo principal oscuro (fondo de página)
+   --brand-surface : fondo de paneles y secciones secundarias
+   --brand-gold    : color acento principal, botones y títulos
+   --brand-cyan    : acento secundario, etiquetas y bordes activos
+   --brand-light   : texto claro sobre fondos oscuros
+   --brand-muted   : texto secundario, subtextos y metadatos
+   --hero-tint/side: capas de degradado del hero (ajustar aquí si cambia) */
+:root {
+  --brand-bg: #163d2a;
+  --brand-surface: #0e2a1c;
+  --brand-gold: #c9a53e;
+  --brand-cyan: #4bb482;
+  --brand-light: #eee4d4;
+  --brand-muted: #8aab97;
+  --hero-tint: rgba(207,100,36,0.14);
+  --hero-side-left: rgba(0,0,0,0.40);
+  --hero-side-mid: rgba(0,0,0,0.10);
+  --hero-side-right: rgba(0,0,0,0.45);
+}
+
+/* ── 2. Parallax ──
+   Los elementos con [data-parallax] tienen un fondo que se desplaza
+   a distinta velocidad que el scroll. El valor de desplazamiento lo
+   calcula script.js y lo escribe en --parallax-offset.
+   background-position usa esa variable para mover el fondo verticalmente.
+   NOTA: solo funciona cuando el elemento tiene un background-image; si
+   el fondo es un color plano el efecto no es visible. */
+[data-parallax] {
+  --parallax-offset: 0px;
+  background-position: center var(--parallax-offset);
+}
+
+/* ── 3. Pantalla de carga ──
+   Cubre toda la pantalla con z-index:120, el más alto del sitio.
+   El fondo usa un radial-gradient marrón oscuro para evocar maltas.
+   El pseudoelemento ::before agrega líneas de scanlines para textura.
+   La clase .oculta activa opacity:0 + visibility:hidden con transición;
+   visibility:hidden se necesita además de opacity:0 para que el elemento
+   no siga capturando clicks después de desvanecerse. */
 #pantalla-carga {
   position: fixed;
   inset: 0;
@@ -31,6 +101,9 @@
   max-width: 360px;
   width: 88vw;
 }
+/* Las esquinas decorativas del frame del loader.
+   Cada una es un borde parcial (solo 2 de los 4 lados)
+   posicionado en una esquina del contenedor con position:absolute. */
 .lc {
   position: absolute;
   width: 20px;
@@ -60,6 +133,9 @@
   background: linear-gradient(to left, transparent, rgba(201,165,62,0.45));
 }
 .loader-orn-diamond { color: #c9a53e; font-size: 0.5rem; opacity: 0.75; }
+/* Animación de pulso del logo durante la carga.
+   El logo crece levemente y aumenta su glow dorado para dar la
+   sensación de estar "respirando" mientras espera al usuario. */
 @keyframes loader-badge-pulse {
   0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(201,165,62,0.35)) drop-shadow(0 0 6px rgba(160,100,20,0.25)); }
   50%       { transform: scale(1.04); filter: drop-shadow(0 0 38px rgba(201,165,62,0.65)) drop-shadow(0 0 14px rgba(180,120,20,0.45)); }
@@ -104,7 +180,7 @@
 }
 .loader-divider-star { color: #c9a53e; font-size: 0.58rem; }
 .loader-tagline {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
   font-size: 0.7rem;
   letter-spacing: 0.48em;
   padding-right: 0.48em;
@@ -130,7 +206,7 @@
   animation: loader-progress-anim 2.2s ease-in-out forwards;
   border-radius: 1px;
 }
-/* ── Galería de fotos ───────────────────────────── */
+/* -- Galer�a de fotos ----------------------------- */
 .foto-grid {
   display: grid;
   grid-template-columns: 2fr 2fr 1.5fr 1.5fr;
@@ -216,7 +292,7 @@
   padding-bottom: 1px;
 }
 
-/* ── Seccion impacto video ─────────────────────── */
+/* -- Seccion impacto video ----------------------- */
 .impacto-section {
   position: relative;
   overflow: hidden;
@@ -292,6 +368,7 @@
   background: #c9a53e;
   color: #000;
 }
+/* Contenedor del video con marco y capas para look cinematico. */
 .impacto-video-shell {
   position: relative;
   border-radius: 28px;
@@ -350,14 +427,20 @@
   }
 }
 
-/* ── Base ─────────────────────────────────────── */
+/* ── 6. Base y tipografía global ──
+   box-sizing:border-box en todos los elementos evita que padding y border
+   se sumen al width/height definido, simplificando el layout.
+   scroll-behavior:smooth activa el desplazamiento suave al hacer click
+   en enlaces ancla (#seccion) sin necesidad de JavaScript. */
+/* -- Base --------------------------------------- */
+/* Reset mínimo + tipografía y colores globales del sitio. */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
 body {
   font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
-  background-color: #163d2a;
-  color: #eee4d4;
+  background-color: var(--brand-bg);
+  color: var(--brand-light);
   margin: 0;
 }
 
@@ -365,12 +448,22 @@ h1, h2, h3, h4, .font-heading {
   font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
 }
 
-/* Scrollbar personalizado */
+/* Scrollbar personalizado: solo funciona en WebKit (Chrome/Safari/Edge).
+   Firefox usa scrollbar-width y scrollbar-color (no implementados aqui). */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #163d2a; }
 ::-webkit-scrollbar-thumb { background: #c9a53e; border-radius: 3px; }
 
-/* ── Navbar editorial (estilo À la Fût) ─────────── */
+/* ── 7. Navbar editorial ──
+   El navbar es position:fixed y empieza transparente (fondo:transparent).
+   Al hacer scroll, script.js le agrega la clase .scrolled que activa
+   el fondo semiopaco con backdrop-filter:blur para efecto de vidrio.
+   Hay DOS versiones:
+     - .nav-desktop-grid → visible solo en pantallas >= 768px
+     - .nav-mobile-bar   → visible solo en pantallas < 768px
+   Ambas conviven en el DOM pero solo una es visible a la vez. */
+/* -- Navbar editorial ---------------------------- */
+/* Barra fija con transicion de transparencia a vidrio al hacer scroll. */
 #navbar {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -386,21 +479,29 @@ h1, h2, h3, h4, .font-heading {
   box-shadow: 0 10px 35px rgba(0,0,0,0.28);
 }
 
-/* ── Desktop grid segmentado 7 columnas ──────── */
+/* ── 7a. Grid del navbar desktop (7 columnas) ──
+   Columnas: [waffle] [BOOK] [GALERIA] [logo-center] [EVENTOS] [sociales] [bandera]
+   La columna central (1fr) se estira para centrar el logo; las demás
+   tienen ancho fijo para mantener la simetría izquierda/derecha. */
+/* -- Desktop grid segmentado 7 columnas -------- */
 .nav-desktop-grid {
   display: none;
 }
 @media (min-width: 768px) {
   .nav-desktop-grid {
     display: grid;
-    grid-template-columns: 72px 170px 170px 1fr 250px 86px 72px;
+    grid-template-columns: 72px 160px 160px 1fr 150px 240px 86px;
     border-top: 1px solid rgba(255,255,255,0.15);
     border-bottom: 1px solid rgba(255,255,255,0.15);
     background: rgba(4, 22, 14, 0.30);
   }
 }
 
-/* Caja genérica */
+/* Caja genérica de cada celda del nav.
+   position:relative es necesario para que las capas amarillo/cyan
+   (position:absolute) se posicionen dentro de la celda, no del viewport.
+   overflow:hidden corta las capas cuando height aún es 0. */
+/* Caja generica de cada celda de nav. */
 .nav-box {
   position: relative;
   overflow: hidden;
@@ -412,8 +513,20 @@ h1, h2, h3, h4, .font-heading {
 }
 .nav-box-link { justify-content: center; }
 
-/* Capas de animación — igual que Next.js */
-/* Amarillo: sube de h-0 a h-100%, z-index bajo, con delay de 70ms */
+/*
+  Sistema de hover en dos capas (efecto "flash" de entrada):
+  PASO 1: Al entrar el mouse, la capa CYAN sube rápido (120ms) y luego
+          se desvanece (opacity→0 con delay 120ms). El usuario ve un destello.
+  PASO 2: Mientras tanto, la capa AMARILLA sube más lento (220ms con 70ms delay)
+          y queda como color final visible.
+  El resultado: flash cian fugaz → estado final dorado.
+  Si se quiere cambiar el efecto, ajustar las duraciones de ambas capas.
+*/
+/*
+  Capas de hover:
+  1) Amarillo crece primero y queda como color final.
+  2) Cyan aparece rapido y se desvanece para crear "flash" de entrada.
+*/
 .nav-box-yellow {
   pointer-events: none;
   position: absolute;
@@ -423,7 +536,7 @@ h1, h2, h3, h4, .font-heading {
   z-index: 0;
   transition: height 220ms 70ms ease-out;
 }
-/* Cyan: sube de h-0 a h-100% rápido (120ms) y luego se desvanece (opacity-0 con delay 120ms) */
+/* Capa cyan de entrada rapida antes del estado final amarillo. */
 .nav-box-cyan {
   pointer-events: none;
   position: absolute;
@@ -450,14 +563,37 @@ h1, h2, h3, h4, .font-heading {
   letter-spacing: 0.2em;
 }
 
-/* Logo central en grid */
+/* El logo central tiene dos estados:
+   .nav-logo-large  → logo grande + texto debajo, visible cuando no hay scroll
+   .nav-logo-compact → solo texto "CERTEZA" pequeño, visible con scroll
+   La transición entre estados usa opacity + transform (no display:none)
+   para poder animar suavemente con CSS transitions. */
+/* Logo central del navbar desktop, con version grande y compacta. */
 .nav-logo-center {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 78px;
+  overflow: visible;
   border-right: 1px solid rgba(255,255,255,0.15);
+  z-index: 25;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-logo-center:hover .nav-box-yellow { height: 100%; }
+.nav-logo-center:hover .nav-box-cyan   { height: 100%; opacity: 0; }
+.nav-logo-center:hover .nav-box-content { color: #000; }
+
+.nav-logo-center-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: visible;
 }
 
 /* Sociales sin animacion de caja */
@@ -471,7 +607,7 @@ h1, h2, h3, h4, .font-heading {
   padding: 0 0.75rem;
 }
 
-/* Mobile bar */
+/* Version mobile: hamburguesa + logo + separadores. */
 .nav-mobile-bar {
   display: flex;
   align-items: center;
@@ -485,7 +621,7 @@ h1, h2, h3, h4, .font-heading {
   .nav-mobile-bar { display: none; }
 }
 
-/* Izquierda (legacy, ya no se usa en grid) */
+/* Bloques legacy conservados para compatibilidad de variantes anteriores. */
 .nav-left {
   display: flex;
   align-items: center;
@@ -525,7 +661,7 @@ h1, h2, h3, h4, .font-heading {
   font-size: 0.35rem;
 }
 
-/* Logo central */
+/* Elementos base del logo (tipografia, tamanos y estados). */
 .nav-logo {
   display: flex;
   flex-direction: column;
@@ -571,6 +707,44 @@ h1, h2, h3, h4, .font-heading {
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.50));
 }
 
+.nav-logo-center .nav-logo-wrap {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 252px;
+  height: 122px;
+  overflow: hidden;
+  background: rgba(4, 22, 14, 0.36);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-left: 1px solid rgba(255,255,255,0.12);
+  border-right: 1px solid rgba(255,255,255,0.12);
+  border-bottom: 1px solid rgba(255,255,255,0.16);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.22);
+}
+
+.nav-logo-center .nav-logo-image {
+  width: 196px;
+  height: auto;
+  max-height: 78px;
+  margin: 0 auto;
+  filter: brightness(1.16) contrast(1.22)
+          drop-shadow(0 0 0.6px rgba(255,255,255,0.95))
+          drop-shadow(0 0 1.2px rgba(255,255,255,0.75));
+  transition: filter 0.15s ease;
+}
+
+.nav-logo-center .nav-logo-wrap .nav-box-yellow,
+.nav-logo-center .nav-logo-wrap .nav-box-cyan {
+  z-index: 1;
+}
+
+.nav-logo-center .nav-logo-large,
+.nav-logo-center .nav-logo-compact {
+  z-index: 2;
+}
+
 .nav-logo-large .nav-logo-image {
   display: block;
 }
@@ -586,6 +760,36 @@ h1, h2, h3, h4, .font-heading {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
+.nav-logo-large {
+  justify-content: center;
+  align-items: center;
+  gap: 0.2rem;
+  padding-top: 0.42rem;
+}
+
+.nav-logo-under {
+  font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  padding-right: 0.24em;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 0 0.65px rgba(255,255,255,0.95), 0 0 1.2px rgba(255,255,255,0.45);
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.nav-logo-center:hover .nav-logo-under {
+  color: #1c1c1c;
+  text-shadow: 0 0 0.5px rgba(0,0,0,0.55);
+}
+
+.nav-logo-center:hover .nav-logo-image {
+  filter: brightness(0) saturate(100%)
+          drop-shadow(0 0 0.6px rgba(0,0,0,0.65))
+          drop-shadow(0 0 1px rgba(0,0,0,0.38));
+}
+
 .nav-logo-compact {
   flex-direction: row;
   gap: 0.5rem;
@@ -595,17 +799,27 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .nav-logo-name-compact {
-  font-size: 0.98rem;
-  letter-spacing: 0.16em;
-  padding-right: 0.16em;
+  font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  padding-right: 0.2em;
+  color: #fff;
   white-space: nowrap;
   line-height: 1;
+  text-shadow: 0 0 0.45px rgba(255,255,255,0.85);
 }
 
 #navbar.logo-compact .nav-logo-wrap {
-  width: 172px;
-  height: 40px;
-  overflow: visible;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transform: none;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: hidden;
 }
 
 #navbar.logo-compact .nav-logo-large {
@@ -626,7 +840,7 @@ h1, h2, h3, h4, .font-heading {
   letter-spacing: 0.18em;
 }
 
-/* Derecha */
+/* Grupo de iconos sociales del bloque derecho. */
 .nav-right {
   display: flex;
   align-items: center;
@@ -662,7 +876,7 @@ h1, h2, h3, h4, .font-heading {
   margin: 0 0.05rem;
 }
 
-/* Línea dorada inferior al scrollear */
+/* Linea inferior que se activa cuando navbar entra en estado scrolled. */
 .nav-border-line {
   height: 1px;
   background: rgba(207,100,36,0.20);
@@ -672,7 +886,7 @@ h1, h2, h3, h4, .font-heading {
 }
 #navbar.scrolled .nav-border-line { transform: scaleX(1); }
 
-/* Mobile menu */
+/* Panel desplegable de menu mobile. */
 #mobile-menu {
   display: none;
   background: rgba(4, 14, 10, 0.98);
@@ -707,13 +921,25 @@ h1, h2, h3, h4, .font-heading {
   }
 
   #navbar.logo-compact .nav-logo-wrap {
-    width: 172px;
-    height: 40px;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform: none;
+    overflow: hidden;
   }
 }
 
 
-/* ── Hero ────────────────────────────────────── */
+/* ── 8. Hero con videos de fondo ──
+   El hero tiene 3 capas de overlay superpuestas (z-index 10 cada una):
+     .hero-overlay-gold : degradado radial en la parte superior (tono naranja/dorado)
+     .hero-overlay-lr   : degradado horizontal (oscurece los bordes laterales)
+     .hero-overlay-tb   : degradado vertical (oscurece arriba y abajo)
+   Dividirlo en 3 capas permite ajustar cada dirección de forma independiente
+   sin afectar las otras. El contenido del hero está en z-index:20.
+   Los videos de fondo están en z-index 1−2, los overlays en 10, el contenido en 20. */
+/* -- Hero -------------------------------------- */
 #inicio {
   position: relative;
   min-height: 100vh;
@@ -738,17 +964,23 @@ h1, h2, h3, h4, .font-heading {
 
 .hero-overlay-gold {
   position: absolute; inset: 0; z-index: 10;
-  background: radial-gradient(circle at top, rgba(207,100,36,0.14), transparent 34%);
+  background: radial-gradient(circle at top, var(--hero-tint), transparent 34%);
+  transition: background 0.35s ease;
 }
 .hero-overlay-lr {
   position: absolute; inset: 0; z-index: 10;
-  background: linear-gradient(to right, rgba(0,0,0,0.40), rgba(0,0,0,0.10), rgba(0,0,0,0.45));
+  background: linear-gradient(to right, var(--hero-side-left), var(--hero-side-mid), var(--hero-side-right));
+  transition: background 0.35s ease;
 }
 .hero-overlay-tb {
   position: absolute; inset: 0; z-index: 10;
   background: linear-gradient(to bottom, rgba(0,0,0,0.20), transparent, rgba(0,0,0,0.60));
 }
 
+/* Los elementos del hero (h1, texto, botones) empiezan ocultos (opacity:0)
+   y con transform desplazado. La clase .visible los activa con transitions
+   de distinta duración y delay para crear el efecto de cascada de entrada.
+   Los delays están definidos en cada regla individual (0.3s, 0.4s, etc.) */
 .hero-content {
   position: relative;
   z-index: 20;
@@ -762,10 +994,12 @@ h1, h2, h3, h4, .font-heading {
 }
 .hero-content.visible { opacity: 1; transform: translateY(0); }
 
+/* Línea dorada decorativa que "crece" desde el centro hacia afuera.
+   Usa scaleX(0)→scaleX(1) con transform-origin:center para ese efecto. */
 .hero-line {
   width: 5rem;
   height: 4px;
-  background: #c9a53e;
+  background: var(--brand-gold);
   margin: 0 auto 2rem;
   transform: scaleX(0);
   transform-origin: center;
@@ -776,7 +1010,7 @@ h1, h2, h3, h4, .font-heading {
 .hero-h1 {
   font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
   font-size: clamp(3.5rem, 10vw, 7rem);
-  color: #c9a53e;
+  color: var(--brand-gold);
   line-height: 1;
   margin-bottom: 1.25rem;
   text-shadow: 0 4px 20px rgba(0,0,0,0.5);
@@ -852,7 +1086,7 @@ h1, h2, h3, h4, .font-heading {
   transform: scale(1.08);
 }
 
-/* Scroll indicator */
+/* Indicador de scroll en hero (mouse + punto animado). */
 .scroll-indicator {
   position: absolute;
   bottom: 2rem;
@@ -885,7 +1119,8 @@ h1, h2, h3, h4, .font-heading {
   50%       { transform: translateY(6px); }
 }
 
-/* ── Galería (legacy) ────────────────────────── */
+/* -- Galeria (legacy) -------------------------- */
+/* Seccion antigua del catalogo, mantenida por compatibilidad. */
 #cervezas-legacy {
   background: #163d2a;
   padding: 7rem 1rem;
@@ -909,8 +1144,8 @@ h1, h2, h3, h4, .font-heading {
 }
 .section-line.visible { transform: scaleX(1); }
 
-/* Tarjeta cerveza / carrusel de latas */
-#cervezas-legacy .max-w-7xl {
+/* Tarjetas de cerveza legacy: lateral, lata y bloque de info. */
+#cervezas-legacy {
   overflow: hidden;
 }
 
@@ -1136,7 +1371,8 @@ h1, h2, h3, h4, .font-heading {
   background: radial-gradient(circle at center, rgba(207,100,36,0.08), transparent 72%);
 }
 
-/* ── Footer ──────────────────────────────────── */
+/* -- Footer ------------------------------------ */
+/* Entrada suave del footer al aparecer en viewport. */
 #contacto {
   background: #0e2a1c;
   border-top: 1px solid rgba(207,100,36,0.30);
@@ -1156,7 +1392,7 @@ h1, h2, h3, h4, .font-heading {
   margin: 1.5rem 0;
 }
 
-/* ── WhatsApp Flotante ───────────────────────── */
+/* -- WhatsApp Flotante ------------------------- */
 .whatsapp-flotante {
   position: fixed;
   bottom: 1.5rem;
@@ -1192,7 +1428,8 @@ h1, h2, h3, h4, .font-heading {
   }
 }
 
-/* ── CTA Móvil Fijo ──────────────────────────── */
+/* -- CTA Movil Fijo ---------------------------- */
+/* Boton sticky para mobile, activado por clase .visible via JS. */
 .cta-movil-fijo {
   display: none;
   position: fixed;
@@ -1237,7 +1474,14 @@ h1, h2, h3, h4, .font-heading {
   background: #dcc06a;
 }
 
-/* ── Timeline Elaboración ────────────────────── */
+/* ── 13. Timeline de elaboración ──
+   Glassmorphism: fondo rgba semitransparente + backdrop-filter:blur(8px)
+   sobre el fondo oscuro de la sección. Requiere que el elemento padre
+   NO tenga overflow:hidden para que el blur funcione correctamente.
+   El video overlay usa z-index:10 para tapar el contenido de la card;
+   el .timeline-step usa z-index:11 para quedar por encima del video. */
+/* -- Timeline Elaboracion ---------------------- */
+/* Tarjetas del proceso con glassmorphism y overlay de video. */
 .timeline-section {
   position: relative;
   overflow: hidden;
@@ -1328,7 +1572,14 @@ h1, h2, h3, h4, .font-heading {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(201,165,62,0.2);
 }
 
-/* ── Video overlay al hover ── */
+/* Overlay del video en el timeline.
+   Estado reposo: opacity:0 + translateY(12px) scale(0.97) → invisible y desplazado.
+   Estado hover: opacity:1 + translateY(0) scale(1) → visible en su posición.
+   Se activa por dos vías:
+     a) CSS :hover en .timeline-card (funciona en desktop)
+     b) Clase .is-hovered añadida por JS (respaldo para casos especiales)
+   La doble activación garantiza que siempre funcione. */
+/* Overlay de video: aparece por hover o por clase .is-hovered (fallback JS). */
 .timeline-video-overlay {
   position: absolute;
   inset: 0;
@@ -1341,6 +1592,10 @@ h1, h2, h3, h4, .font-heading {
   z-index: 10;
 }
 .timeline-card:hover .timeline-video-overlay {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.timeline-card.is-hovered .timeline-video-overlay {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
@@ -1412,7 +1667,8 @@ h1, h2, h3, h4, .font-heading {
   width: 100%;
 }
 
-/* ── Eventos Agenda ──────────────────────────── */
+/* -- Eventos ----------------------------------- */
+/* Cards de evento con media superior, metadata y accion final. */
 .eventos-section {
   position: relative;
   overflow: hidden;
@@ -1678,7 +1934,7 @@ h1, h2, h3, h4, .font-heading {
   }
 }
 
-/* ── Carrusel latas de cerveza ─────────────────────────────── */
+/* -- Carrusel latas de cerveza (bloque alterno / legacy) ----- */
 .beer-can-section {
   background: radial-gradient(circle at 20% 0%, #1e3d25 0%, #1e4530 34%, #1a3d28 100%);
   padding: clamp(4.5rem, 8vw, 6.5rem) 1rem;
@@ -1701,7 +1957,15 @@ h1, h2, h3, h4, .font-heading {
   font-size: clamp(0.9rem, 1.8vw, 1.1rem);
   margin-top: 0.4rem;
 }
-/* ── Slider de cervezas estilo Alafut ───────────────────────────── */
+/* ── 15. Carrusel estilo Alafut ──
+   El slider usa una animación CSS pura con @keyframes alafut-loop.
+   El track tiene el doble de elementos (el JS los duplica) y la animación
+   desplaza exactamente (slide-width + gap) * beers-count hacia la izquierda.
+   Al llegar al final, el segundo set es idéntico al primero, el reinicio
+   es invisible. Para ajustar la velocidad, cambiar la duración '24s'.
+   El fondo tiene múltiples radial-gradient para los halos de luz lateral. */
+/* -- Slider de cervezas estilo Alafut ----------------------------- */
+/* Carrusel continuo infinito; el track se anima con keyframes alafut-loop. */
 .alafut-beers-section {
   background:
     radial-gradient(1500px 520px at 8% -12%, rgba(207, 100, 36, 0.35), transparent 58%),
@@ -1784,7 +2048,7 @@ h1, h2, h3, h4, .font-heading {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
   font-size: clamp(2.15rem, 5vw, 4.1rem);
   letter-spacing: 0.045em;
   line-height: 0.95;
@@ -1926,6 +2190,12 @@ h1, h2, h3, h4, .font-heading {
   opacity: 0.82;
   width: 68%;
 }
+/* ── Keyframe del loop del slider ──
+   Fórmula del desplazamiento total:
+     (slide-width + slider-gap) × beers-count
+   Donde beers-count es la cantidad ORIGINAL de latas (sin duplicar),
+   ya que queremos llegar exactamente al inicio del segundo set.
+   Ambas variables CSS se definen en .alafut-beers-track y en script.js. */
 @keyframes alafut-loop {
   0% {
     transform: translateX(0);
@@ -1973,10 +2243,15 @@ h1, h2, h3, h4, .font-heading {
   }
 }
 
-/* Fin de archivo */
+/* Fin de bloque Alafut. Debajo continan secciones de pagina final. */
 
 
-/* ── Stats ────────────────────────────────────── */
+/* ── 16. Stats ──
+   Los contadores tienen opacity:0 por defecto y se revelan con la
+   clase .visible que agrega script.js vía IntersectionObserver.
+   El efecto de conteo del número es 100% JavaScript (requestAnimationFrame). */
+/* -- Stats -------------------------------------- */
+/* Contadores con animacion numerica sincronizada por IntersectionObserver. */
 .stats-section {
   background: #0e2a1c;
   border-top: 1px solid rgba(201,165,62,0.12);
@@ -2008,13 +2283,13 @@ h1, h2, h3, h4, .font-heading {
   line-height: 1;
 }
 .stat-suffix {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
   font-size: clamp(1.2rem, 2.5vw, 1.8rem);
   color: #dcc06a;
   margin-left: 2px;
 }
 .stat-label {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
   font-size: 0.78rem;
   letter-spacing: 0.22em;
   color: #8aab97;
@@ -2028,7 +2303,8 @@ h1, h2, h3, h4, .font-heading {
 }
 .stat-item.visible { opacity: 1; transform: translateY(0); }
 
-/* ── Visítanos ───────────────────────────────── */
+/* -- Visitanos --------------------------------- */
+/* Seccion de conversion con foto principal y datos de contacto. */
 .visitanos-section {
   background: #163d2a;
   padding: 5rem 1.5rem 6rem;
@@ -2086,7 +2362,7 @@ h1, h2, h3, h4, .font-heading {
 .visitanos-row strong {
   display: block;
   color: #eee4d4;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
   font-size: 0.85rem;
   letter-spacing: 0.14em;
   margin-bottom: 0.2rem;
@@ -2104,7 +2380,7 @@ h1, h2, h3, h4, .font-heading {
   display: inline-block;
   background: #c9a53e;
   color: #0e2a1c;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
   font-size: 1rem;
   letter-spacing: 0.22em;
   padding: 0.85rem 2.2rem;
@@ -2158,9 +2434,215 @@ h1, h2, h3, h4, .font-heading {
   line-height: 1;
 }
 .visitanos-badge-txt {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
   font-size: 0.7rem;
   letter-spacing: 0.1em;
   color: #c8ddd5;
   line-height: 1.4;
+}
+
+/* -- Manifiesto ------------------------------- */
+/* Firma de marca: bloque editorial entre hero y producto. */
+.manifiesto-section {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(201,165,62,0.2), transparent 40%),
+    radial-gradient(circle at 88% 80%, rgba(75,180,130,0.16), transparent 38%),
+    linear-gradient(180deg, #102d20 0%, #0c2419 100%);
+  padding: clamp(3.5rem, 7vw, 5.8rem) 1.5rem;
+  text-align: center;
+}
+
+.manifiesto-kicker {
+  margin: 0 0 0.8rem;
+  color: var(--brand-cyan);
+  letter-spacing: 0.28em;
+  font-size: 11px;
+}
+
+.manifiesto-title {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2.1rem, 5vw, 4rem);
+  line-height: 1.02;
+}
+
+.manifiesto-title span {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--brand-gold);
+}
+
+.manifiesto-text {
+  margin: 1.1rem auto 0;
+  max-width: 56ch;
+  font-family: 'Manrope', sans-serif;
+  color: #c8ddd5;
+  line-height: 1.7;
+}
+
+/* -- Cierre cinematografico --------------------- */
+/* Ultimo bloque visual de cierre con CTA. */
+.finale-section {
+  position: relative;
+  min-height: 62vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.finale-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.1) brightness(0.8);
+}
+
+.finale-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.65)),
+    radial-gradient(circle at 50% 35%, rgba(201,165,62,0.22), transparent 48%);
+}
+
+.finale-content {
+  position: relative;
+  z-index: 4;
+  text-align: center;
+  padding: 1rem;
+}
+
+.finale-kicker {
+  margin: 0;
+  color: var(--brand-cyan);
+  letter-spacing: 0.22em;
+  font-size: 11px;
+}
+
+.finale-content h2 {
+  margin: 0.7rem 0 1rem;
+  color: #fff;
+  font-size: clamp(2.2rem, 6vw, 4.4rem);
+  line-height: 0.98;
+}
+
+.finale-content h2 span {
+  color: var(--brand-gold);
+  display: block;
+}
+
+.finale-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.34);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.8rem 1.35rem;
+  letter-spacing: 0.15em;
+  font-size: 0.74rem;
+  transition: all 0.25s ease;
+}
+
+.finale-cta:hover {
+  background: var(--brand-gold);
+  border-color: var(--brand-gold);
+  color: #121212;
+}
+
+/* -- Footer propio (sin framework) -------------- */
+/* Layout semantico en columnas, responsive a 1 o 3 columnas. */
+.footer-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 860px) {
+  .footer-content {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.footer-brand-title {
+  margin: 0 0 0.75rem;
+  font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
+  font-size: 2rem;
+  letter-spacing: 0.14em;
+  color: #c9a53e;
+}
+
+.footer-brand-copy {
+  margin: 0;
+  color: #c8ddd5;
+  max-width: 22rem;
+  font-family: 'Manrope', sans-serif;
+}
+
+.footer-col-title {
+  margin: 0 0 1rem;
+  font-family: 'Abril Fatface', 'Times New Roman', Times, serif;
+  font-size: 1.2rem;
+  color: #c9a53e;
+}
+
+.footer-links-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 2;
+}
+
+.footer-link {
+  color: #c8ddd5;
+  text-decoration: none;
+}
+
+.footer-contact-list {
+  color: #c8ddd5;
+  line-height: 2;
+}
+
+.footer-contact-list p {
+  margin: 0;
+}
+
+.footer-legal {
+  text-align: center;
+  color: #8aab97;
+  font-size: 0.875rem;
+}
+
+.footer-legal-text {
+  margin: 0;
+}
+
+/* ── 21. Reveal escalonado ──
+   Clase reutilizable: cualquier elemento con .reveal-on-scroll
+   empieza invisible (opacity:0, desplazado 16px hacia abajo) y
+   cuando el IntersectionObserver de script.js le añade .visible,
+   la transition CSS lo anima a su posición final.
+   Para cambiar el efecto: ajustar translateY, duration o easing aquí. */
+/* -- Reveal escalonado -------------------------- */
+/* Utilidad compartida para entradas suaves por scroll. */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.reveal-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
 }

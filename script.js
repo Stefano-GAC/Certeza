@@ -1,37 +1,58 @@
-﻿window.tailwind = window.tailwind || {};
-window.tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        'beer-dark': '#163d2a',
-        'beer-gold': '#c9a53e',
-        'beer-amber': '#3d8a5e',
-        'beer-light': '#eee4d4',
-      },
-      fontFamily: {
-        heading: ['Bebas Neue', 'sans-serif'],
-        body: ['Manrope', 'sans-serif'],
-      },
-    },
-  },
-};
+﻿// =============================================================
+// script.js — Certeza Cervecería Artesanal
+// Contiene TODA la lógica interactiva del sitio:
+//   • Pantalla de carga con duración mínima garantizada
+//   • Slider de latas de cerveza con loop infinito
+//   • Navbar que cambia de estado al hacer scroll
+//   • Sistema de internacionalización (ES / EN) con persistencia
+//   • Hero con crossfade de tres videos de fondo
+//   • Animaciones de entrada por scroll (IntersectionObserver)
+//   • Parallax sutil en secciones seleccionadas
+//   • Overlay de video al hacer hover en el timeline
+//   • Contadores animados de estadísticas
+//   • CTA fijo en mobile que aparece al scrollear
+// =============================================================
 
+// Esperamos DOMContentLoaded para que todos los elementos del HTML
+// ya existan antes de buscarlos con getElementById/querySelector.
+// Si ejecutáramos el código antes, obtendríamos null en los selectores.
 document.addEventListener('DOMContentLoaded', () => {
-  // ── Pantalla de carga ─────────────────────
+  // ── Pantalla de carga ──────────────────────────────────────────
+  // La pantalla cubre todo el sitio con z-index 120 hasta que cargue.
+  // Se usa una duración mínima de 2200 ms para que la animación del
+  // logo se vea completa incluso en conexiones muy rápidas.
   const loader = document.getElementById('pantalla-carga');
-  const minDuration = 2200;
-  const start = Date.now();
+  const minDuration = 2200; // ms — duración mínima visible del loader
+  const start = Date.now(); // momento exacto en que empezó el script
+
   const hideLoader = () => {
+    // Calculamos cuánto tiempo ha pasado; si es menos del mínimo,
+    // esperamos la diferencia antes de ocultar. Si ya pasó el tiempo,
+    // Math.max(0, ...) da 0 y se oculta de inmediato.
     const elapsed = Date.now() - start;
     const remaining = Math.max(0, minDuration - elapsed);
+    // Agregar la clase 'oculta' activa una transición CSS de opacity+visibility.
+    // El && evita errores si el elemento fue removido del DOM.
     setTimeout(() => loader && loader.classList.add('oculta'), remaining);
   };
+
+  // readyState puede ser 'complete' si el script cargó tarde (ej. caché);
+  // en ese caso no hay evento 'load' que esperar, llamamos directo.
   if (document.readyState === 'complete') {
     hideLoader();
   } else {
+    // { once: true } elimina el listener automáticamente después de usarlo una vez.
     window.addEventListener('load', hideLoader, { once: true });
   }
-  // ── Slider de cervezas estilo Alafut ────────────
+  // ── Slider de cervezas estilo Alafut ────────────────────────────
+  // Cada entrada del array define una lata. Propiedades:
+  //   name         → texto accesible del slide (aria-label)
+  //   image        → lata PNG sobre fondo transparente
+  //   bg           → imagen de arte que aparece detrás al hover
+  //   canWidth     → ancho en px de la lata; controla --beer-can-width en CSS
+  //   artScale     → cuánto se expande el arte de fondo al hover
+  //   canScale     → escala base de la lata (en reposo)
+  //   canHoverScale → escala de la lata al hacer hover (siempre > canScale)
   const ALAFUT_BEERS = [
     {
       name: 'Mojito',
@@ -84,10 +105,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const sliderTrack = document.getElementById('alafut-slider-track');
 
   if (sliderRoot && sliderTrack) {
+    // TRUCO DE LOOP: duplicamos el array para que el CSS pueda desplazar
+    // el track completo sin que el usuario note el salto al reiniciar.
+    // La animación CSS mueve exactamente (slide-width + gap) × beers-count
+    // hacia la izquierda, que equivale al primer set. Al llegar al fin,
+    // el segundo set es idéntico al primero, así el reinicio es invisible.
     const LOOP_BEERS = [...ALAFUT_BEERS, ...ALAFUT_BEERS];
+
+    // Le pasamos la cantidad ORIGINAL (sin duplicar) como variable CSS.
+    // La keyframe 'alafut-loop' en style.css usa este valor para calcular
+    // exactamente hasta dónde desplazar antes de reiniciar.
     sliderTrack.style.setProperty('--beers-count', String(ALAFUT_BEERS.length));
-    sliderTrack.innerHTML = LOOP_BEERS.map((beer) => `
-      <article class="alafut-beers-slide" role="listitem" aria-label="${beer.name}">
+
+    // Inyectamos el HTML de cada slide dinámicamente.
+    // Las propiedades CSS personalizadas (--beer-can-width etc.) se pasan
+    // directamente en el atributo style para que cada card tenga su propia escala.
+    sliderTrack.innerHTML = LOOP_BEERS.map((beer, index) => `
+      <article class="alafut-beers-slide" role="listitem" aria-label="${beer.name}" data-beer-index="${index % ALAFUT_BEERS.length}" tabindex="0">
         <div class="alafut-beers-card" style="--beer-can-width:${beer.canWidth ?? 220}px;--beer-art-scale:${beer.artScale ?? 1.18};--beer-can-scale:${beer.canScale ?? 1};--beer-can-hover-scale:${beer.canHoverScale ?? 1.035}">
           <div class="alafut-beers-card-bg" aria-hidden="true">
             <img src="${beer.bg}" alt="" loading="lazy" />
@@ -103,10 +137,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const navbar = document.getElementById('navbar');
 
   const ensureCompactText = (id) => {
+    // El logo compacto solo debe mostrar el texto "CERTEZA".
+    // Esta función lo verifica y corrige si alguien edita el HTML y agrega
+    // elementos extra adentro. Si el único hijo ya es el span correcto,
+    // no hace nada (evita reflowed innecesarios del DOM).
     const node = document.getElementById(id);
-    if (!node) return;
+    if (!node) return; // el elemento no existe, nada que hacer
     const onlyText = node.querySelector('.nav-logo-name-compact');
+    // Condición: ya tiene el texto Y no tiene otros hijos = está limpio
     if (onlyText && node.children.length === 1) return;
+    // Si falla la condición, forzamos el contenido correcto
     node.innerHTML = '<span class="nav-logo-name nav-logo-name-compact">CERTEZA</span>';
   };
 
@@ -114,16 +154,28 @@ document.addEventListener('DOMContentLoaded', () => {
   ensureCompactText('nav-logo-compact-mobile');
 
   const updateNavbarOnScroll = () => {
+    // 56 px coincide con la altura inicial del navbar + 1 px de margen.
+    // Por encima de ese valor se activa el modo compacto.
     const isScrolled = window.scrollY > 56;
+
+    // 'scrolled' → activa fondo semitransparente + blur en CSS
+    // 'logo-compact' → colapsa el logo grande y muestra el texto pequeño
+    // classList.toggle(clase, condición) añade si true, quita si false.
     navbar.classList.toggle('scrolled', isScrolled);
     navbar.classList.toggle('logo-compact', isScrolled);
-    // Mobile bar logos
+
+    // En mobile el logo se controla por opacity (no por clase) porque
+    // la barra mobile es un elemento separado del grid desktop.
     const lm = document.getElementById('nav-logo-large-mobile');
     const cm = document.getElementById('nav-logo-compact-mobile');
     if (lm) lm.style.opacity = isScrolled ? '0' : '1';
     if (cm) cm.style.opacity = isScrolled ? '1' : '0';
   };
+
+  // Ejecutamos de inmediato por si la página cargó con scroll previo (ej. F5 a mitad).
   updateNavbarOnScroll();
+  // passive:true indica al navegador que no vamos a llamar preventDefault(),
+  // permitiéndole optimizar el scroll sin esperar a que termine el listener.
   window.addEventListener('scroll', updateNavbarOnScroll, { passive: true });
 
   // ── Mobile menu (llamado desde onclick en HTML) ─
@@ -140,33 +192,49 @@ document.addEventListener('DOMContentLoaded', () => {
     en: { src: 'https://flagcdn.com/24x18/gb.png', src2x: 'https://flagcdn.com/48x36/gb.png', alt: 'English' },
   };
 
+  // ── Diccionario de traducciones (i18n) ─────────────────────────
+  // Estructura: I18N[lang][seccion][clave] = texto
+  // Reglas para mantenerlo:
+  //   1. Siempre que se añada texto visible al HTML, agregar la clave
+  //      en I18N.es Y en I18N.en antes de publicar.
+  //   2. Los textos que contienen HTML (ej. <br>, <span>) se insertan
+  //      con innerHTML en applyLanguage(), no con textContent.
+  //   3. Cambiar un texto aquí no rompe el layout; cambiar una clave sí
+  //      (hay que actualizar la referencia en applyLanguage también).
   const I18N = {
     es: {
       pageTitle: 'Certeza — Cerveza Artesanal',
       loaderTagline: 'CERVECERÍA ARTESANAL',
       nav: {
-        menu: 'MENU',
+        gallery: 'GALERIA',
         book: 'BOOK',
-        phoneTitle: 'Telefono',
-        phoneAria: 'Telefono',
+        events: 'EVENTOS',
+        phoneTitle: 'Teléfono',
+        phoneAria: 'Teléfono',
         mailTitle: 'Email',
         mailAria: 'Email',
         langTitle: 'Cambiar idioma',
         langAria: 'Cambiar idioma',
         searchTitle: 'Buscar',
         searchAria: 'Buscar',
-        openMenuAria: 'Abrir menu',
-        mobile: ['Inicio', 'Cervezas', 'Contacto', 'Book'],
+        openMenuAria: 'Abrir menú',
+        mobile: ['Galeria', 'Book', 'Eventos'],
       },
       hero: {
         sub: 'Cerveza Artesanal',
-        desc: 'Espuma dorada, aroma intenso y un caracter que deja huella. Cada sorbo convierte el momento en una experiencia irresistible.',
+        desc: 'Espuma dorada, aroma intenso y un carácter que deja huella. Cada sorbo convierte el momento en una experiencia irresistible.',
         explore: 'Explorar Cervezas',
         contact: 'Contacto',
       },
       stats: {
         labels: ['Variedades artesanales', 'Clientes felices', 'Elaborando con pasión', 'Eventos realizados'],
         thirdSuffix: ' años',
+      },
+      manifesto: {
+        kicker: 'FIRMA DE MARCA',
+        title: 'No vendemos cerveza.',
+        titleAccent: 'Creamos noches con memoria.',
+        text: 'Cada lote se piensa para quedarse en la conversación, no solo en el vaso. Certeza mezcla ritual, diseño y sabor para que cada brindis tenga peso propio.',
       },
       beersHeading: 'Ilustradas para mirar, creadas para brindar.',
       gallery: {
@@ -227,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
         kicker: 'NUEVA EXPERIENCIA',
         title: 'El Momento ',
         titleAccent: 'Que Hace Boom',
-        desc: 'Color, espuma y energia en una sola toma. Mira el video y deja que Certeza hable por si sola.',
+        desc: 'Color, espuma y energía en una sola toma. Mira el video y deja que Certeza hable por sí sola.',
         cta: 'RESERVAR AHORA',
         tag: 'EXPERIENCIA CERTEZA',
       },
@@ -263,8 +331,9 @@ document.addEventListener('DOMContentLoaded', () => {
       pageTitle: 'Certeza — Craft Beer',
       loaderTagline: 'CRAFT BREWERY',
       nav: {
-        menu: 'MENU',
+        gallery: 'GALLERY',
         book: 'BOOK',
+        events: 'EVENTS',
         phoneTitle: 'Phone',
         phoneAria: 'Phone',
         mailTitle: 'Email',
@@ -274,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
         searchTitle: 'Search',
         searchAria: 'Search',
         openMenuAria: 'Open menu',
-        mobile: ['Home', 'Beers', 'Contact', 'Book'],
+        mobile: ['Gallery', 'Book', 'Events'],
       },
       hero: {
         sub: 'Craft Beer',
@@ -285,6 +354,12 @@ document.addEventListener('DOMContentLoaded', () => {
       stats: {
         labels: ['Craft varieties', 'Happy customers', 'Brewing with passion', 'Events hosted'],
         thirdSuffix: ' years',
+      },
+      manifesto: {
+        kicker: 'BRAND SIGNATURE',
+        title: 'We do not sell beer.',
+        titleAccent: 'We create nights worth remembering.',
+        text: 'Every batch is crafted to stay in the conversation, not just in the glass. Certeza blends ritual, design, and flavor so every toast carries its own weight.',
       },
       beersHeading: 'Illustrated to admire, crafted to celebrate.',
       gallery: {
@@ -379,16 +454,28 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   };
 
+  // setText: atajo para textContent seguro.
+  // Usamos textContent (no innerHTML) para evitar inyección de HTML.
+  // Si el selector no encuentra nada, el if evita un error de null.
   const setText = (selector, value) => {
     const el = document.querySelector(selector);
     if (el) el.textContent = value;
   };
 
+  // applyLanguage: aplica TODAS las traducciones del idioma recibido al DOM.
+  // Se llama: 1) al iniciar la página, 2) cada vez que el usuario pulsa la bandera.
+  // Modifica textContent / innerHTML / atributos aria según corresponde.
   const applyLanguage = (lang) => {
+    // Si lang no existe en el diccionario (p.ej. valor corrupto en localStorage),
+    // usamos español como idioma seguro por defecto.
     const t = I18N[lang] || I18N.es;
+
+    // Actualiza el atributo lang del <html> para lectores de pantalla y SEO.
     document.documentElement.lang = lang;
     document.title = t.pageTitle;
 
+    // 1) Bandera activa del selector de idioma.
+    // Cambiamos src, srcset y alt de la imagen de bandera según el idioma.
     const img = document.getElementById('lang-flag');
     if (img) {
       img.src = LANG_IMGS[lang].src;
@@ -396,11 +483,17 @@ document.addEventListener('DOMContentLoaded', () => {
       img.alt = LANG_IMGS[lang].alt;
     }
 
+    // 2) Loader y navbar (desktop + mobile).
     setText('.loader-tagline', t.loaderTagline);
 
-    const navLabels = document.querySelectorAll('.nav-desktop-grid .nav-box-label');
-    if (navLabels[0]) navLabels[0].textContent = t.nav.menu;
-    if (navLabels[1]) navLabels[1].textContent = t.nav.book;
+    // CUIDADO: navLabels se obtiene por posición DOM, no por id.
+    // El índice 0 = primer enlace del grid = BOOK, 1 = GALERIA, 2 = EVENTOS.
+    // Si alguien reordena los enlaces en el HTML, este array cambia y
+    // la asignación de texto quedaría mal. Verificar siempre en ambos lados.
+    const navLabels = document.querySelectorAll('.nav-desktop-grid .nav-box-link .nav-box-label');
+    if (navLabels[0]) navLabels[0].textContent = t.nav.book;
+    if (navLabels[1]) navLabels[1].textContent = t.nav.gallery;
+    if (navLabels[2]) navLabels[2].textContent = t.nav.events;
     const phone = document.querySelector('.nav-socials a[href^="tel:"]');
     if (phone) {
       phone.title = t.nav.phoneTitle;
@@ -433,12 +526,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (t.nav.mobile[i]) a.textContent = t.nav.mobile[i];
     });
 
+    // 3) Hero principal.
     setText('#hero-sub', t.hero.sub);
     setText('#hero-desc', t.hero.desc);
     const heroBtns = document.querySelectorAll('.hero-btns a');
     if (heroBtns[0]) heroBtns[0].textContent = t.hero.explore;
     if (heroBtns[1]) heroBtns[1].textContent = t.hero.contact;
 
+    // 4) Estadisticas.
     const statLabels = document.querySelectorAll('.stats-section .stat-label');
     statLabels.forEach((el, i) => {
       if (t.stats.labels[i]) el.textContent = t.stats.labels[i];
@@ -446,14 +541,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const statSuffix = document.querySelectorAll('.stats-section .stat-suffix');
     if (statSuffix[2]) statSuffix[2].textContent = t.stats.thirdSuffix;
 
+    // 5) Manifiesto de marca.
+    setText('.manifiesto-kicker', t.manifesto.kicker);
+    const manifestoTitle = document.querySelector('.manifiesto-title');
+    if (manifestoTitle) {
+      manifestoTitle.innerHTML = `${t.manifesto.title}<span>${t.manifesto.titleAccent}</span>`;
+    }
+    setText('.manifiesto-text', t.manifesto.text);
+
+    // 6) Titulo del carrusel de latas.
     setText('.alafut-beers-heading', t.beersHeading);
 
+    // 7) Galeria y overlays.
     const galleryTitle = document.querySelector('#galeria h2');
     if (galleryTitle) {
       galleryTitle.innerHTML = `${t.gallery.titlePrefix}<span style="color:#c9a53e">${t.gallery.titleAccent}</span>`;
     }
     const gallerySub = document.querySelector('#galeria h2 + p');
     if (gallerySub) gallerySub.textContent = t.gallery.subtitle;
+    // Las foto-cells tienen los textos tanto en atributos data-* como en el HTML
+    // del overlay (.foto-texto). Actualizamos ambos para que sean consistentes:
+    // data-titulo y data-texto son los "datos fuente"; el overlay es lo visible.
     const photoCells = document.querySelectorAll('#galeria .foto-cell');
     photoCells.forEach((cell, i) => {
       const card = t.gallery.cards[i];
@@ -468,6 +576,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (more) more.textContent = card.more;
     });
 
+    // 8) Timeline: texto de cada paso + título que aparece sobre el video.
+    // El .timeline-video-title es el texto superpuesto al video en el overlay,
+    // por eso se actualiza por separado del h3 de la card.
     setText('.timeline-label', t.timeline.label);
     const timelineTitle = document.querySelector('.timeline-title');
     if (timelineTitle) {
@@ -485,6 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (vt) vt.textContent = copy.title;
     });
 
+    // 9) Eventos y CTA de bloque.
     setText('.eventos-label', t.events.label);
     const eventsTitle = document.querySelector('.eventos-title');
     if (eventsTitle) {
@@ -505,6 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     setText('.eventos-footer-cta a', t.events.all);
 
+    // 10) Bloque de impacto con video.
     setText('.impacto-kicker', t.impacto.kicker);
     const impactoTitle = document.querySelector('.impacto-copy h2');
     if (impactoTitle) {
@@ -514,6 +627,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setText('.impacto-cta', t.impacto.cta);
     setText('.impacto-video-tag', t.impacto.tag);
 
+    // 11) Sección "Visítanos".
+    // Las tres filas de datos (dirección, horario, teléfono) se reconstruyen
+    // completamente con innerHTML porque contienen iconos emoji + links anidados.
+    // Es más seguro reconstruirlas que tratar de actualizar cada fragmento.
     const visitBadge = document.querySelector('.visitanos-badge-txt');
     if (visitBadge) visitBadge.innerHTML = t.visit.badge;
     setText('.visitanos-label', t.visit.label);
@@ -552,7 +669,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setText('.visitanos-cta', t.visit.cta);
 
-    const footerCols = document.querySelectorAll('footer .col-12.col-md-4');
+    // 12) Footer completo.
+    const footerCols = document.querySelectorAll('footer .footer-col');
     if (footerCols[0]) {
       const p = footerCols[0].querySelector('p');
       if (p) p.textContent = t.footer.brand;
@@ -571,8 +689,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const ps = footerCols[2].querySelectorAll('p');
       if (ps[2]) ps[2].textContent = t.footer.city;
     }
-    setText('footer .text-center .mb-0', t.footer.rights);
+    setText('.footer-legal-text', t.footer.rights);
 
+    // 13) Accesibilidad de boton flotante + CTA mobile.
     const wa = document.getElementById('whatsapp-flotante');
     if (wa) {
       wa.title = t.wa.title;
@@ -581,68 +700,97 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setText('#cta-movil-fijo .cta-movil-btn', t.mobileCta);
 
+    // Persistencia para mantener idioma al recargar.
     currentLang = lang;
     localStorage.setItem('certeza-lang', lang);
   };
 
+  // Prioridad de idioma inicial:
+  //   1. Lo que guardó el usuario en la sesión anterior (localStorage)
+  //   2. El atributo lang del <html> (definido en el HTML estático)
+  //   3. Español como fallback final
   let currentLang = localStorage.getItem('certeza-lang') || document.documentElement.lang || 'es';
+  // Doble seguridad: si el valor guardado no es una clave válida del diccionario,
+  // lo reemplazamos por español en lugar de mostrar el sitio sin textos.
   if (!I18N[currentLang]) currentLang = 'es';
 
+  // toggleLang es global (window.) porque se llama desde el atributo onclick
+  // del botón de bandera en el HTML. No puede ser una variable local.
   window.toggleLang = function () {
     const next = currentLang === 'es' ? 'en' : 'es';
     applyLanguage(next);
   };
 
+  // Aplicación inicial: renderiza el idioma correcto desde el primer frame.
   applyLanguage(currentLang);
 
-  // ── Hero: animaciones de entrada ────────────────
+  // ── Hero: animaciones de entrada ────────────────────────────────
+  // Usamos 'load' (no 'DOMContentLoaded') para que los videos del hero
+  // ya estén inicializados antes de mostrar el contenido.
+  // Cada elemento del hero empieza en opacity:0 en CSS y con la clase
+  // 'visible' se activa una transición individual con delay escalonado
+  // (definido en style.css) para crear un efecto de aparición en cascada.
   window.addEventListener('load', () => {
     const ids = ['hero-content', 'hero-line', 'hero-h1', 'hero-sub', 'hero-desc', 'hero-btns'];
     ids.forEach(id => {
       const el = document.getElementById(id);
       if (el) {
-        el.classList.add('visible');
+        el.classList.add('visible'); // activa transition CSS del elemento
       }
     });
   });
 
-  // ── Hero: crossfade de videos ───────────────────
-  const CROSSFADE_MS = 1200;
+  // ── Hero: crossfade de tres videos de fondo ────────────────────
+  // Técnica: los tres videos están apilados en la misma posición absoluta.
+  // El activo tiene opacity:1 y z-index:2; los inactivos tienen opacity:0.
+  // Al terminar un video, 'startCrossfade' hace la transición al siguiente.
+  const CROSSFADE_MS = 1200; // duración en ms de la transición (debe coincidir con CSS transition)
+
   const videos = [
     document.getElementById('video0'),
     document.getElementById('video1'),
     document.getElementById('video2'),
-  ].filter(Boolean);
-  let activeIdx = 0;
-  let isCrossfading = false;
+  ].filter(Boolean); // .filter(Boolean) elimina null si algún id no existe en el DOM
+
+  let activeIdx = 0;        // índice del video que está visible ahora
+  let isCrossfading = false; // bandera para evitar que 'ended' dispare dos veces seguidas
 
   function startCrossfade() {
+    // Si el crossfade anterior no terminó aún (ej. video muy corto), ignoramos el evento.
     if (isCrossfading) {
       return;
     }
     isCrossfading = true;
 
+    // Calculamos el índice circular del siguiente video (0→1→2→0→...)
     const nextIdx = (activeIdx + 1) % videos.length;
     const nextVideo = videos[nextIdx];
+
+    // Reiniciamos el siguiente al segundo 0 por si ya había reproducido antes.
     nextVideo.currentTime = 0;
+    // .catch(() => {}) silencia el rechazo de play() en navegadores que
+    // bloquean autoplay hasta que el usuario interactúe con la página.
     nextVideo.play().catch(() => {});
 
-    // El siguiente sube encima y aparece
+    // El siguiente sube a primer plano: z-index alto + opacity visible
     nextVideo.style.zIndex = '2';
     nextVideo.style.opacity = '1';
-    // El actual se queda abajo y desaparece
+    // El actual queda detrás y se desvanece — CSS lo anima con transition
     videos[activeIdx].style.zIndex = '1';
     videos[activeIdx].style.opacity = '0';
 
+    // Después de que la transición CSS termina, actualizamos el índice activo
+    // y liberamos la bandera para permitir el siguiente crossfade.
     setTimeout(() => {
       activeIdx = nextIdx;
       isCrossfading = false;
     }, CROSSFADE_MS);
   }
 
+  // Cada video dispara el crossfade al terminar su reproducción.
   videos.forEach(v => v.addEventListener('ended', startCrossfade));
 
-  // Iniciar primer video
+  // Arrancamos el primer video; el .catch silencia errores de autoplay bloqueado.
   if (videos[0]) {
     videos[0].play().catch(() => {});
   }
@@ -653,75 +801,178 @@ document.addEventListener('DOMContentLoaded', () => {
       link.style.color = '#c9a53e';
     });
     link.addEventListener('mouseleave', () => {
-      link.style.color = '#d1d5db';
+      link.style.color = '#c8ddd5';
     });
   });
 
-  // ── Intersection Observer: animaciones al scrollear ──
+  // ── Intersection Observer: reveals al scrollear ─────────────────
+  // threshold: 0.15 significa que el elemento debe estar al menos un 15%
+  // visible en el viewport para activarse. Evita activaciones prematuras.
   const observerOptions = { threshold: 0.15 };
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
+        // Añadimos 'visible' una sola vez y NO la quitamos al salir.
+        // Esto es intencional: el reveal es permanente, no se repite
+        // cada vez que el elemento entra/sale del viewport.
         entry.target.classList.add('visible');
       }
     });
   }, observerOptions);
 
-  // Observar elementos con animación on-scroll
-  document.querySelectorAll('.gallery-title, .section-line, .beer-card, .footer-content, .timeline-card, .eventos-card, .timeline-header, .eventos-header').forEach(el => {
+  // Registramos todos los elementos que usan animación de entrada.
+  // La clase 'visible' activa transitions de opacity y transform en CSS.
+  document.querySelectorAll(
+    '.gallery-title, .section-line, .beer-card, .footer-content, ' +
+    '.timeline-card, .eventos-card, .timeline-header, .eventos-header, .reveal-on-scroll'
+  ).forEach(el => {
     observer.observe(el);
   });
 
-  // ── Timeline: video hover ──
+  // ── Parallax sutil ────────────────────────────────────────────────
+  // Los elementos con data-parallax="0.09" (por ejemplo) definen la velocidad.
+  // Un valor de 0.09 significa que el fondo se mueve 9 px por cada 100 px de scroll.
+  // El signo negativo produce el efecto opuesto al scroll (sensación de profundidad).
+  // El offset resultante se escribe en la variable CSS --parallax-offset, que
+  // el CSS usa en background-position para mover el fondo sin reflow.
+  const parallaxNodes = document.querySelectorAll('[data-parallax]');
+  let parallaxTicking = false; // flag del patrón 'requestAnimationFrame throttle'
+
+  const runParallax = () => {
+    const y = window.scrollY;
+    parallaxNodes.forEach((node) => {
+      const speed = Number(node.dataset.parallax) || 0;
+      // Math.round evita valores subpíxel que pueden causar blur en algunos navegadores.
+      node.style.setProperty('--parallax-offset', `${Math.round(y * speed * -1)}px`);
+    });
+    parallaxTicking = false; // libera el flag para el siguiente frame
+  };
+
+  window.addEventListener('scroll', () => {
+    // Patrón rAF throttle: solo programamos un frame si no hay uno pendiente.
+    // Sin esto, scroll puede disparar cientos de cálculos por segundo.
+    if (!parallaxTicking) {
+      window.requestAnimationFrame(runParallax);
+      parallaxTicking = true;
+    }
+  }, { passive: true });
+
+  // Ejecutamos al cargar para calcular el offset inicial si la página ya tiene scroll.
+  runParallax();
+
+  // ── Timeline: video de proceso al hacer hover ───────────────────
+  // Cada card del timeline tiene un <video> oculto dentro de .timeline-video-overlay.
+  // Al hacer hover mostramos ese video sobre la card (el CSS lo hace visible
+  // cuando la card tiene la clase 'is-hovered' O cuando tiene :hover).
+  // Usamos la clase JS 'is-hovered' como respaldo para dispositivos donde
+  // :hover puede no funcionar correctamente (algunos navegadores móviles).
   document.querySelectorAll('.timeline-card').forEach(card => {
     const video = card.querySelector('.timeline-video');
-    if (!video) return;
+    if (!video) return; // si una card no tiene video, la saltamos sin error
+
+    // preload='metadata' descarga solo los primeros bytes del video para
+    // tener disponible el primer frame lo antes posible sin descargar todo.
+    // .load() fuerza al navegador a iniciar la descarga aunque el atributo
+    // ya esté en el HTML (necesario si el src fue puesto después de cargar).
+    video.preload = 'metadata';
+    video.load();
+
     card.addEventListener('mouseenter', () => {
+      card.classList.add('is-hovered'); // activa overlay via CSS
+      // El .catch vacío evita errores de consola si el video aún no cargó.
       video.play().catch(() => {});
     });
+
     card.addEventListener('mouseleave', () => {
+      card.classList.remove('is-hovered'); // oculta overlay via CSS
       video.pause();
-      video.currentTime = 0;
+      video.currentTime = 0; // resetea al inicio para que la próxima vez empiece desde 0
     });
   });
 
-  // ── CTA Móvil Fijo (mostrar al scrollear) ────────────
+  // ── CTA Móvil Fijo ────────────────────────────────────────────────
+  // En mobile aparece un botón fijo "Pedir Ahora" en la parte inferior.
+  // Solo se muestra cuando el usuario bajó más de 300 px (pasó el hero),
+  // para no tapar el contenido del hero con el botón desde el inicio.
+  // En desktop no es visible (style.css lo oculta con display:none en >767px).
   const ctaMovil = document.getElementById('cta-movil-fijo');
-  const scrollThresholdCTA = 300;
-  
+  const scrollThresholdCTA = 300; // px desde arriba para mostrar el botón
+
   window.addEventListener('scroll', () => {
     if (window.scrollY > scrollThresholdCTA) {
-      ctaMovil.classList.add('visible');
+      ctaMovil.classList.add('visible');    // opacity:1 + pointer-events:auto
     } else {
-      ctaMovil.classList.remove('visible');
+      ctaMovil.classList.remove('visible'); // oculto pero sigue en el DOM
     }
   }, { passive: true });
   // ── Stats: contador animado ─────────────────
-  const animateCounter = (el) => {
-    const target = parseInt(el.dataset.target, 10);
-    const duration = 1600;
-    const step = target / (duration / 16);
-    let current = 0;
-    const tick = () => {
-      current = Math.min(current + step, target);
-      el.textContent = Math.floor(current).toLocaleString(currentLang === 'en' ? 'en-US' : 'es-CO');
-      if (current < target) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
+  // ── Stats: contador animado con requestAnimationFrame ───────────
+  // Los contadores leen su valor final desde el atributo data-target del HTML.
+  // La animación usa rAF para actualizar el número en cada frame del navegador,
+  // calculando el progreso de 0 a 1 en función del tiempo transcurrido.
+
+  const resetCounter = (el) => {
+    // Si hay un rAF activo guardado en data-rafId, lo cancelamos para no
+    // acumular múltiples animaciones corriendo a la vez sobre el mismo elemento.
+    if (el.dataset.rafId) {
+      cancelAnimationFrame(Number(el.dataset.rafId));
+      delete el.dataset.rafId;
+    }
+    el.textContent = '0'; // vuelve al estado inicial visible
   };
 
+  const animateCounter = (el) => {
+    const target = parseInt(el.dataset.target, 10); // valor final desde el HTML
+    const duration = 1600; // ms que dura la animación completa
+    const start = performance.now(); // referencia de tiempo de alta precisión
+
+    const tick = () => {
+      const elapsed = performance.now() - start;
+      // progress va de 0.0 a 1.0; Math.min evita que pase de 1 en frames lentos
+      const progress = Math.min(elapsed / duration, 1);
+      const current = Math.floor(target * progress);
+      // toLocaleString formatea el número con separadores según idioma:
+      // 'es-CO' → 1.000  |  'en-US' → 1,000
+      el.textContent = Math.floor(current).toLocaleString(currentLang === 'en' ? 'en-US' : 'es-CO');
+      if (progress < 1) {
+        // Guardamos el id del rAF en un data attribute para poder cancelarlo
+        el.dataset.rafId = String(requestAnimationFrame(tick));
+      } else {
+        delete el.dataset.rafId; // limpiamos al terminar
+      }
+    };
+
+    resetCounter(el); // asegura estado limpio antes de empezar
+    el.dataset.rafId = String(requestAnimationFrame(tick)); // arranca el primer frame
+  };
+
+  // statsObserver re-anima los contadores si el usuario scrollea de vuelta
+  // a la sección (el observer vigila entrada Y salida del viewport).
   const statsObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
-      if (!entry.isIntersecting) return;
-      const item = entry.target;
-      setTimeout(() => {
-        item.classList.add('visible');
-        const num = item.querySelector('.stat-num');
-        if (num) animateCounter(num);
-      }, i * 120);
-      statsObserver.unobserve(item);
-    });
-  }, { threshold: 0.3 });
+      const item = entry.target;  // .stat-item
+      const num = item.querySelector('.stat-num'); // el span con el número
 
-  document.querySelectorAll('.stat-item').forEach(el => statsObserver.observe(el));});
+      if (entry.isIntersecting) {
+        // hasAnimated evita relanzar si el item nunca salió del viewport.
+        if (item.dataset.hasAnimated === 'true') return;
+        item.dataset.hasAnimated = 'true';
+        // i * 120 ms de delay escalonado: cada stat aparece 120 ms después del anterior.
+        setTimeout(() => {
+          item.classList.add('visible'); // animación de entrada CSS
+          if (num) animateCounter(num); // arranca el conteo numérico
+        }, i * 120);
+        return;
+      }
+
+      // Al salir del viewport reseteamos para que al volver se reanime.
+      item.dataset.hasAnimated = 'false';
+      item.classList.remove('visible');
+      if (num) resetCounter(num);
+    });
+  }, { threshold: 0.3 }); // 30% visible para empezar (más conservador que el observer general)
+
+  document.querySelectorAll('.stat-item').forEach(el => statsObserver.observe(el));
+});
 
