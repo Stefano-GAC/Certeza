@@ -1405,6 +1405,7 @@ h1, h2, h3, h4, .font-heading {
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 0;
   color: #fff;
   text-decoration: none;
   box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
@@ -1420,6 +1421,8 @@ h1, h2, h3, h4, .font-heading {
 .whatsapp-flotante svg {
   width: 28px;
   height: 28px;
+  display: block;
+  flex-shrink: 0;
 }
 @media (max-width: 767px) {
   .whatsapp-flotante {
